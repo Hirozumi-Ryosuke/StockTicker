@@ -42,7 +42,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="3dp"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 tools:text="GOOG"
                 style="@style/BoldTextView"
                 />
@@ -54,7 +54,7 @@
                 android:layout_below="@id/tickerName"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="3dp"
-                android:textSize="14dp"
+                android:textSize="14sp"
                 tools:text="GOOG"
                 style="@style/BoldTextView"
                 />
