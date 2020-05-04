@@ -2,6 +2,7 @@
   <dictionary name="user">
     <words>
       <w>gson</w>
+      <w>stetho</w>
       <w>stockticker</w>
       <w>timez</w>
     </words>

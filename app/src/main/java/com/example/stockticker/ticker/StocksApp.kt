@@ -1,13 +1,21 @@
 package com.example.stockticker.ticker
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.MultiDexApplication
 import com.example.stockticker.R
+import com.example.stockticker.ticker.analytics.Analytics
+import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.network.NewsProvider
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.viewpump.ViewPump
 import kotlinx.android.synthetic.*
+import javax.inject.Inject
 
 open class StocksApp : MultiDexApplication() {
 
     class InjectionHolder {
-        @Inject lateinit var analytics: Analytics
+        @Inject
+        lateinit var analytics: Analytics
         @Inject lateinit var appPreferences: AppPreferences
         @Inject lateinit var newsProvider: NewsProvider
     }

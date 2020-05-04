@@ -1,33 +1,52 @@
 package com.example.stockticker.ticker.settings
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID
 import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
+import android.content.Intent
+import android.content.Intent.*
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.KITKAT
+import android.os.Build.VERSION_CODES.N
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.preference.CheckBoxPreference
-import androidx.preference.ListPreference
-import androidx.preference.Preference
+import androidx.multidex.BuildConfig
+import androidx.multidex.BuildConfig.APPLICATION_ID
+import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
-import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import com.example.stockticker.R
 import com.example.stockticker.R.string.*
+import com.example.stockticker.R.xml.prefs
 import com.example.stockticker.ticker.AppPreferences
 import com.example.stockticker.ticker.AppPreferences.Companion.DID_RATE
+import com.example.stockticker.ticker.AppPreferences.Companion.END_TIME
 import com.example.stockticker.ticker.AppPreferences.Companion.FONT_SIZE
 import com.example.stockticker.ticker.AppPreferences.Companion.SETTING_AUTOSORT
 import com.example.stockticker.ticker.AppPreferences.Companion.SETTING_IMPORT
+import com.example.stockticker.ticker.AppPreferences.Companion.SETTING_PRIVACY_POLICY
+import com.example.stockticker.ticker.AppPreferences.Companion.SETTING_TUTORIAL
+import com.example.stockticker.ticker.AppPreferences.Companion.SETTING_WHATS_NEW
+import com.example.stockticker.ticker.AppPreferences.Companion.START_TIME
+import com.example.stockticker.ticker.AppPreferences.Companion.UPDATE_DAYS
+import com.example.stockticker.ticker.AppPreferences.Companion.UPDATE_INTERVAL
 import com.example.stockticker.ticker.components.InAppMessage
 import com.example.stockticker.ticker.components.InAppMessage.showMessage
 import com.example.stockticker.ticker.components.Injector
@@ -42,6 +61,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import timber.log.Timber.*
+import java.io.File
+import java.util.*
+import java.util.Locale.getDefault
+import java.util.jar.Manifest
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -82,13 +105,14 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         Injector.appComponent.inject(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?
     ) {
         super.onViewCreated(view, savedInstanceState)
         (toolbar.layoutParams as ViewGroup.MarginLayoutParams).topMargin = requireContext().getStatusBarHeight()
-        listView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        listView.addItemDecoration(DividerItemDecoration(activity, VERTICAL))
         listView.isVerticalScrollBarEnabled = false
         setupSimplePreferencesScreen()
     }
@@ -102,12 +126,12 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         savedInstanceState: Bundle?,
         rootKey: String?
     ) {
-        setPreferencesFromResource(R.xml.prefs, rootKey)
+        setPreferencesFromResource(prefs, rootKey)
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        when {
-            preference.key == AppPreferences.START_TIME || preference.key == AppPreferences.END_TIME-> {
+        when (preference.key) {
+            START_TIME, END_TIME -> {
                 val pref = preference as TimePreference
                 val dialog = createTimePickerDialog(pref)
                 dialog.show()
@@ -121,9 +145,10 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
      * device configuration dictates that a simplified, single-pane UI should be
      * shown.
      */
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("CommitPrefEdits") private fun setupSimplePreferencesScreen() {
         run {
-            val pref = findPreference<Preference>(AppPreferences.SETTING_WHATS_NEW)
+            val pref = findPreference<Preference>(SETTING_WHATS_NEW)
             pref.onPreferenceClickListener = OnPreferenceClickListener {
                 parent.showWhatsNew()
                 true
@@ -131,7 +156,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val pref = findPreference<Preference>(AppPreferences.SETTING_TUTORIAL)
+            val pref = findPreference<Preference>(SETTING_TUTORIAL)
             pref.onPreferenceClickListener = OnPreferenceClickListener {
                 parent.showTutorial()
                 true
@@ -139,7 +164,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val privacyPref = findPreference<Preference>(AppPreferences.SETTING_PRIVACY_POLICY)
+            val privacyPref = findPreference<Preference>(SETTING_PRIVACY_POLICY)
             privacyPref.onPreferenceClickListener = OnPreferenceClickListener {
                 CustomTabs.openTab(
                     requireContext(), resources.getString(privacy_policy_url)
@@ -266,8 +291,8 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val refreshPreference = findPreference(AppPreferences.UPDATE_INTERVAL) as ListPreference
-            val refreshIndex = preferences.getInt(AppPreferences.UPDATE_INTERVAL, 1)
+            val refreshPreference = findPreference(UPDATE_INTERVAL) as ListPreference
+            val refreshIndex = preferences.getInt(UPDATE_INTERVAL, 1)
             refreshPreference.setValueIndex(refreshIndex)
             refreshPreference.summary = refreshPreference.entries[refreshIndex]
             refreshPreference.onPreferenceChangeListener = object : DefaultPreferenceChangeListener() {
@@ -279,7 +304,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                     val listPreference = preference as ListPreference
                     val index = listPreference.findIndexOfValue(stringValue)
                     preferences.edit()
-                        .putInt(AppPreferences.UPDATE_INTERVAL, index)
+                        .putInt(UPDATE_INTERVAL, index)
                         .apply()
                     broadcastUpdateWidget()
                     refreshPreference.summary = refreshPreference.entries[index]
@@ -290,23 +315,23 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val startTimePref = findPreference(AppPreferences.START_TIME) as TimePreference
-            startTimePref.summary = preferences.getString(AppPreferences.START_TIME, "09:30")
+            val startTimePref = findPreference(START_TIME) as TimePreference
+            startTimePref.summary = preferences.getString(START_TIME, "09:30")
             startTimePref.onPreferenceChangeListener = object : DefaultPreferenceChangeListener() {
                 override fun onPreferenceChange(
                     preference: Preference,
                     newValue: Any
                 ): Boolean {
-                    val startTimez = appPreferences.timeAsIntArray(newValue.toString())
+                    val startTimez = appPreferences.timeAsIntArray("$newValue")
                     val endTimez = appPreferences.endTime()
                     if (endTimez[0] == startTimez[0] && endTimez[1] == startTimez[1]) {
                         showDialog(getString(incorrect_time_update_error))
                         return false
                     } else {
                         preferences.edit()
-                            .putString(AppPreferences.START_TIME, newValue.toString())
+                            .putString(START_TIME, "$newValue")
                             .apply()
-                        startTimePref.summary = newValue.toString()
+                        startTimePref.summary = "$newValue"
                         stocksProvider.schedule()
                         showMessage(requireActivity(), start_time_updated)
                         return true
@@ -316,8 +341,8 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val endTimePref = findPreference(AppPreferences.END_TIME) as TimePreference
-            endTimePref.summary = preferences.getString(AppPreferences.END_TIME, "16:30")
+            val endTimePref = findPreference(END_TIME) as TimePreference
+            endTimePref.summary = preferences.getString(END_TIME, "16:30")
             run {
                 val endTimez = appPreferences.endTime()
                 val startTimez = appPreferences.startTime()
@@ -330,16 +355,16 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                     preference: Preference,
                     newValue: Any
                 ): Boolean {
-                    val endTimez = appPreferences.timeAsIntArray(newValue.toString())
+                    val endTimez = appPreferences.timeAsIntArray("$newValue")
                     val startTimez = appPreferences.startTime()
                     if (endTimez[0] == startTimez[0] && endTimez[1] == startTimez[1]) {
                         showDialog(getString(incorrect_time_update_error))
                         return false
                     } else {
                         preferences.edit()
-                            .putString(AppPreferences.END_TIME, newValue.toString())
+                            .putString(END_TIME, "$newValue")
                             .apply()
-                        endTimePref.summary = newValue.toString()
+                        endTimePref.summary = "$newValue"
                         stocksProvider.schedule()
                         showMessage(requireActivity(), end_time_updated)
                         return true
@@ -349,11 +374,11 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         }
 
         run {
-            val daysPreference = findPreference<MultiSelectListPreference>(AppPreferences.UPDATE_DAYS)
+            val daysPreference = findPreference<MultiSelectListPreference>(UPDATE_DAYS)
             val selectedDays = appPreferences.updateDaysRaw()
             daysPreference.summary = appPreferences.updateDays()
                 .joinToString {
-                    it.getDisplayName(SHORT, Locale.getDefault())
+                    it.getDisplayName(SHORT, getDefault())
                 }
             daysPreference.values = selectedDays
             daysPreference.onPreferenceChangeListener = object : DefaultPreferenceChangeListener() {
@@ -371,7 +396,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                     appPreferences.setUpdateDays(selectedValues)
                     daysPreference.summary = appPreferences.updateDays()
                         .joinToString {
-                            it.getDisplayName(SHORT, Locale.getDefault())
+                            it.getDisplayName(SHORT, getDefault())
                         }
                     stocksProvider.schedule()
                     showMessage(requireActivity(), days_updated_message)
@@ -400,7 +425,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         return SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(
             requireActivity(),
             Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) != PackageManager.PERMISSION_GRANTED
+        ) != PERMISSION_GRANTED
     }
 
     private fun askForExternalStoragePermissions(reqCode: Int) {
@@ -460,11 +485,8 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
     }
 
     private fun launchImportIntent() {
-        val intent = if (SDK_INT >= KITKAT) {
-            Intent(Intent.ACTION_OPEN_DOCUMENT)
-        } else {
-            Intent(Intent.ACTION_GET_CONTENT)
-        }
+        val intent =
+            Intent(ACTION_OPEN_DOCUMENT)
         intent.type = "*/*"
         startActivityForResult(intent, REQCODE_FILE_READ)
     }
@@ -494,39 +516,39 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
     }
 
     private fun shareTickers(file: File) {
-        val intent = Intent(Intent.ACTION_SEND)
+        val intent = Intent(ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>())
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(my_stock_portfolio))
-        intent.putExtra(Intent.EXTRA_TEXT, getString(share_email_subject))
+        intent.putExtra(EXTRA_EMAIL, arrayOf<String>())
+        intent.putExtra(EXTRA_SUBJECT, getString(my_stock_portfolio))
+        intent.putExtra(EXTRA_TEXT, getString(share_email_subject))
         if (!file.exists() || !file.canRead()) {
             showDialog(getString(error_sharing))
             w(Throwable("Error sharing tickers"))
             return
         }
-        val uri = if (SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(requireContext(), BuildConfig.APPLICATION_ID + ".provider", file)
+        val uri = if (SDK_INT >= N) {
+            FileProvider.getUriForFile(requireContext(), APPLICATION_ID + ".provider", file)
         } else {
             Uri.fromFile(file)
         }
-        intent.putExtra(Intent.EXTRA_STREAM, uri)
-        val launchIntent = Intent.createChooser(intent, getString(action_share))
-        if (SDK_INT >= Build.VERSION_CODES.N) {
-            launchIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.putExtra(EXTRA_STREAM, uri)
+        val launchIntent = createChooser(intent, getString(action_share))
+        if (SDK_INT >= N) {
+            launchIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(launchIntent)
     }
 
     private fun shareTickers(uri: Uri) {
-        val intent = Intent(Intent.ACTION_SEND)
+        val intent = Intent(ACTION_SEND)
         intent.type = "text/plain"
-        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>())
-        intent.putExtra(Intent.EXTRA_SUBJECT, getString(my_stock_portfolio))
-        intent.putExtra(Intent.EXTRA_TEXT, getString(share_email_subject))
-        intent.putExtra(Intent.EXTRA_STREAM, uri)
-        val launchIntent = Intent.createChooser(intent, getString(action_share))
-        if (SDK_INT >= Build.VERSION_CODES.N) {
-            launchIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.putExtra(EXTRA_EMAIL, arrayOf<String>())
+        intent.putExtra(EXTRA_SUBJECT, getString(my_stock_portfolio))
+        intent.putExtra(EXTRA_TEXT, getString(share_email_subject))
+        intent.putExtra(EXTRA_STREAM, uri)
+        val launchIntent = createChooser(intent, getString(action_share))
+        if (SDK_INT >= N) {
+            launchIntent.addFlags(FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(launchIntent)
     }
@@ -542,30 +564,22 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
     ) {
         when (requestCode) {
             REQCODE_WRITE_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (SDK_INT >= KITKAT) {
-                        launchExportIntent()
-                    } else {
-                        exportPortfolio(AppPreferences.portfolioFile)
-                    }
+                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
+                    launchExportIntent()
                 } else {
                     showDialog(getString(cannot_export_msg))
                 }
             }
             REQCODE_READ_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
                     launchImportIntent()
                 } else {
                     showDialog(getString(cannot_import_msg))
                 }
             }
             REQCODE_WRITE_EXTERNAL_STORAGE_SHARE -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (SDK_INT >= KITKAT) {
-                        launchExportForShareIntent()
-                    } else {
-                        exportAndShareTickers(AppPreferences.tickersFile)
-                    }
+                if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
+                    launchExportForShareIntent()
                 } else {
                     showDialog(getString(cannot_share_msg))
                 }
@@ -578,7 +592,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
         resultCode: Int,
         data: Intent?
     ) {
-        if (requestCode == REQCODE_FILE_READ && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQCODE_FILE_READ && resultCode == RESULT_OK) {
             val fileUri = data?.data
             if (fileUri != null) {
                 val type = requireContext().contentResolver.getType(fileUri)
@@ -596,13 +610,13 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                     }
                 }
             }
-        } else if (requestCode == REQCODE_FILE_WRITE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQCODE_FILE_WRITE && resultCode == RESULT_OK) {
             val fileUri = data?.data
             if (fileUri != null) {
                 exportPortfolio(fileUri)
             }
         }
-        else if (requestCode == REQCODE_FILE_WRITE_SHARE && resultCode == Activity.RESULT_OK) {
+        else if (requestCode == REQCODE_FILE_WRITE_SHARE && resultCode == RESULT_OK) {
             val fileUri = data?.data
             if (fileUri != null) {
                 exportAndShareTickers(fileUri)
@@ -614,10 +628,10 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
     private fun createTimePickerDialog(pref: TimePreference): Dialog {
         val listener = TimeSelectedListener(
             pref,
-            if (pref.key == AppPreferences.START_TIME) start_time_updated
+            if (pref.key == START_TIME) start_time_updated
             else end_time_updated
         )
-        if (pref.key == AppPreferences.START_TIME) {
+        if (pref.key == START_TIME) {
             val startTime = appPreferences.startTime()
             pref.lastHour = startTime[0]
             pref.lastMinute = startTime[1]
@@ -647,7 +661,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                 .setPositiveButton(ok) { _, _ ->
                     onTimeSet(
                         pref, hourText.text.toString().toInt(), minuteText.text.toString().toInt(),
-                        if (pref.key == AppPreferences.START_TIME) start_time_updated
+                        if (pref.key == START_TIME) start_time_updated
                         else end_time_updated
                     )
                 }
@@ -655,7 +669,7 @@ class SettingsFragment : PreferenceFragmentCompat(), ChildFragment,
                 .create()
         }
         dialog.setTitle(
-            if (pref.key == AppPreferences.START_TIME) start_time else end_time
+            if (pref.key == START_TIME) start_time else end_time
         )
         return dialog
     }

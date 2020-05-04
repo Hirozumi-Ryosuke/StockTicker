@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.stockticker"
-        minSdkVersion 24
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -62,6 +62,8 @@ dependencies {
 
     implementation 'io.paperdb:paperdb:2.6'
 
+    debugImplementation 'com.facebook.stetho:stetho:1.5.1'
+    
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.0-alpha-2'
     implementation 'com.squareup.leakcanary:leaksentry:2.0-alpha-3'
 
@@ -96,7 +98,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.4'
-    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-core:17.4.0'
 }
 
 configurations.all {
