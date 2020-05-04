@@ -60,11 +60,11 @@
                 android:layout_height="200dp"
                 android:padding="8dp"
                 >
+
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/graphView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
 
                 <ProgressBar
                     android:id="@+id/progress"
@@ -94,7 +94,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="2dp"
-                        android:layout_marginRight="2dp"
                         android:textSize="@dimen/xlarge_text"
                         tools:text="$1200"
                         />
@@ -102,7 +101,6 @@
                         android:id="@+id/change"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="2dp"
                         android:layout_marginStart="2dp"
                         android:layout_weight="1"
                         android:gravity="end|center_vertical"
@@ -124,7 +122,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/positions_header"
@@ -140,7 +138,6 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/positions"
                     android:textSize="@dimen/thin_title_text"
@@ -155,7 +152,7 @@
                     android:tint="@color/icon_tint"
                     />
 
-            </LinearLayout>
+            </TextView>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -170,7 +167,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    >
+                    android:baselineAligned="false">
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -268,7 +265,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
                 android:gravity="center_vertical"
                 android:text="@string/recent_news"
