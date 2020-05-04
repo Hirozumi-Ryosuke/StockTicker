@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.preference.DialogPreference
+import java.lang.Integer.*
 
 class TimePreference(
     context: Context,
@@ -27,7 +28,7 @@ class TimePreference(
             if (defaultValue == null) {
                 getPersistedString("00:00")
             } else {
-                getPersistedString(defaultValue.toString())
+                getPersistedString("$defaultValue")
             }
         } else {
             defaultValue.toString()
@@ -42,14 +43,14 @@ class TimePreference(
             val pieces = time.split(":".toRegex())
                 .dropLastWhile { it.isEmpty() }
                 .toTypedArray()
-            return Integer.parseInt(pieces[0])
+            return parseInt(pieces[0])
         }
 
         fun getMinute(time: String): Int {
             val pieces = time.split(":".toRegex())
                 .dropLastWhile { it.isEmpty() }
                 .toTypedArray()
-            return Integer.parseInt(pieces[1])
+            return parseInt(pieces[1])
         }
     }
 
