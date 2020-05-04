@@ -1,36 +1,32 @@
 package com.example.stockticker.ticker.model
 
-import android.os.Build
 import android.os.Build.VERSION_CODES.*
-import android.util.Range
 import androidx.annotation.RequiresApi
-import com.example.stockticker.R
-import com.example.stockticker.ticker.components.Injector
-import com.example.stockticker.ticker.home.IHistoryProvider
+import com.example.stockticker.R.string.*
+import com.example.stockticker.ticker.components.Injector.appComponent
+import com.example.stockticker.ticker.model.FetchResult.Companion.failure
 import com.example.stockticker.ticker.network.DataPoint
 import com.example.stockticker.ticker.network.HistoricalDataApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import timber.log.Timber.*
 import java.lang.ref.WeakReference
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.LocalDate.parse
 import java.time.format.DateTimeFormatter.*
 import javax.inject.Inject
+
 
 class HistoryProvider : IHistoryProvider {
 
     @Inject
     internal lateinit var historicalDataApi: HistoricalDataApi
-    private val apiKey = Injector.appComponent.appContext()
-        .getString(R.string.alpha_vantage_api_key)
+    private val apiKey = appComponent.appContext()
+        .getString(alpha_vantage_api_key)
 
     private var cachedData: WeakReference<Pair<String, List<DataPoint>>>? = null
 
     init {
-        Injector.appComponent.inject(this)
+        appComponent.inject(this)
     }
 
     @RequiresApi(O)
@@ -40,14 +36,14 @@ class HistoryProvider : IHistoryProvider {
                 val historicalData = historicalDataApi.getHistoricalData(apiKey = apiKey, symbol = symbol)
                 val points = ArrayList<DataPoint>()
                 historicalData.timeSeries.forEach { entry ->
-                    val epochDate = LocalDate.parse(entry.key, ISO_LOCAL_DATE)
+                    val epochDate = parse(entry.key, ISO_LOCAL_DATE)
                         .toEpochDay()
                     points.add(DataPoint(epochDate.toFloat(), entry.value.close.toFloat()))
                 }
                 points.sorted()
             } catch (ex: Exception) {
                 w(ex)
-                return@withContext FetchResult.failure<List<DataPoint>>(FetchException("Error fetching datapoints", ex))
+                return@withContext failure<List<DataPoint>>(FetchException("Error fetching datapoints", ex))
             }
             FetchResult.success(dataPoints)
         }
@@ -56,7 +52,7 @@ class HistoryProvider : IHistoryProvider {
     @RequiresApi(O)
     override suspend fun getHistoricalDataByRange(
         symbol: String,
-        range: Range
+        range: IHistoryProvider.Range
     ) = withContext(IO) {
         val dataPoints = try {
             if (symbol == cachedData?.get()?.first) {
@@ -72,7 +68,7 @@ class HistoryProvider : IHistoryProvider {
                     historicalDataApi.getHistoricalDataFull(apiKey = apiKey, symbol = symbol)
                 val points = ArrayList<DataPoint>()
                 historicalData.timeSeries.forEach { entry ->
-                    val epochDate = LocalDate.parse(entry.key, ISO_LOCAL_DATE)
+                    val epochDate = parse(entry.key, ISO_LOCAL_DATE)
                         .toEpochDay()
                     points.add(DataPoint(epochDate.toFloat(), entry.value.close.toFloat()))
                 }
@@ -86,7 +82,7 @@ class HistoryProvider : IHistoryProvider {
             }
         } catch (ex: Exception) {
             w(ex)
-            return@withContext FetchResult.failure<List<DataPoint>>(FetchException("Error fetching datapoints", ex))
+            return@withContext failure<List<DataPoint>>(FetchException("Error fetching datapoints", ex))
         }
          FetchResult.success(dataPoints)
     }

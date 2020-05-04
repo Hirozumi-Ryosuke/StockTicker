@@ -17,14 +17,14 @@ class TimePreference(
     override fun onGetDefaultValue(
         a: TypedArray,
         index: Int
-    ): Any? = a.getString(index)
+    ) = a.getString(index)
 
     override fun onSetInitialValue(
         restoreValue: Boolean,
         defaultValue: Any?
     ) {
         super.onSetInitialValue(defaultValue)
-        val time: String = if (restoreValue) {
+        val time = if (restoreValue) {
             if (defaultValue == null) {
                 getPersistedString("00:00")
             } else {

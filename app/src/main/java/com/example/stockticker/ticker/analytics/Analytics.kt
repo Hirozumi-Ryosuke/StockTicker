@@ -3,6 +3,7 @@ package com.example.stockticker.ticker.analytics
 import android.app.Activity
 import android.content.Context
 import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.components.Injector.appComponent
 import com.example.stockticker.ticker.model.IStocksProvider
 import com.example.stockticker.ticker.widget.WidgetDataProvider
 import javax.inject.Inject
@@ -44,12 +45,12 @@ class GeneralProperties {
     lateinit var stocksProvider: IStocksProvider
 
     init {
-        Injector.appComponent.inject(this)
+        appComponent.inject(this)
     }
 
-    val widgetCount: Int
+    val widgetCount
         get() = widgetDataProvider.getAppWidgetIds().size
-    val tickerCount: Int
+    val tickerCount
         get() = stocksProvider.getTickers().size
 
 }

@@ -3,7 +3,6 @@ package com.example.stockticker.ticker.network
 import android.content.Context
 import androidx.multidex.BuildConfig
 import com.example.stockticker.R
-import com.example.stockticker.ticker.home.IHistoryProvider
 import com.example.stockticker.ticker.model.AlarmScheduler
 import com.example.stockticker.ticker.model.HistoryProvider
 import com.example.stockticker.ticker.model.IStocksProvider

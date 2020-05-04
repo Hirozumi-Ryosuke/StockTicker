@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.stockticker.ticker.components.Injector
-import com.example.stockticker.ticker.home.IHistoryProvider
 import com.example.stockticker.ticker.model.IStocksProvider
 import com.example.stockticker.ticker.network.DataPoint
 import kotlinx.coroutines.launch

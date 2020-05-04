@@ -1,14 +1,29 @@
 package com.example.stockticker.ticker.home
 
-import android.os.Build
+import android.app.Activity
+import android.app.AlertDialog.Builder
+import android.appwidget.AppWidgetManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.stockticker.R
+import com.example.stockticker.ticker.analytics.ClickEvent
 import com.example.stockticker.ticker.base.BaseActivity
 import com.example.stockticker.ticker.components.Injector
 import com.example.stockticker.ticker.settings.WidgetSettingsFragment
+import com.example.stockticker.ticker.showDialog
+import com.github.mikephil.charting.BuildConfig
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.activity_paranormal.bottom_navigation
+import javax.inject.Inject
 
+/**
+ * Created by premnirmal on 2/25/16.
+ */
 class ParanormalActivity : BaseActivity(), BottomNavigationView.OnNavigationItemSelectedListener,
     HomeFragment.Parent, SettingsFragment.Parent, WidgetSettingsFragment.Parent {
 
@@ -19,8 +34,7 @@ class ParanormalActivity : BaseActivity(), BottomNavigationView.OnNavigationItem
                 R.id.action_portfolio to HomeFragment::class.java.name,
                 R.id.action_widgets to WidgetsFragment::class.java.name,
                 R.id.action_search to SearchFragment::class.java.name,
-                R.id.action_settings to SettingsFragment::class.java.name,
-                R.id.action_feed to NewsFeedFragment::class.java.name)
+                R.id.action_settings to SettingsFragment::class.java.name)
     }
 
     @Inject internal lateinit var appPreferences: AppPreferences
@@ -34,10 +48,9 @@ class ParanormalActivity : BaseActivity(), BottomNavigationView.OnNavigationItem
         Injector.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_paranormal)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        }
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+
         savedInstanceState?.let { rateDialogShown = it.getBoolean(DIALOG_SHOWN, false) }
 
         bottom_navigation.setOnNavigationItemSelectedListener(this)
@@ -85,9 +98,7 @@ class ParanormalActivity : BaseActivity(), BottomNavigationView.OnNavigationItem
 
     private fun maybeAskToRate(): Boolean {
         if (!rateDialogShown && appPreferences.shouldPromptRate()) {
-            Builder(this)
-                .setTitle(R.string.like_our_app)
-                .setMessage(R.string.please_rate)
+            Builder(this).setTitle(R.string.like_our_app).setMessage(R.string.please_rate)
                 .setPositiveButton(R.string.yes) { dialog, _ ->
                     sendToPlayStore()
                     appPreferences.userDidRate()
@@ -120,7 +131,6 @@ class ParanormalActivity : BaseActivity(), BottomNavigationView.OnNavigationItem
                 R.id.action_widgets -> WidgetsFragment()
                 R.id.action_search -> SearchFragment()
                 R.id.action_settings -> SettingsFragment()
-                R.id.action_feed -> NewsFeedFragment()
                 else -> {
                     throw IllegalStateException("Unknown bottom nav itemId: $itemId - ${item.title}")
                 }
