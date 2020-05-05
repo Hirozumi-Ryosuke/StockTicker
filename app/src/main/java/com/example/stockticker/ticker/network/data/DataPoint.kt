@@ -1,14 +1,14 @@
-package com.example.stockticker.ticker.network
+package com.example.stockticker.ticker.network.data
 
 import android.os.Build
 import android.os.DropBoxManager
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.RequiresApi
-import com.example.stockticker.ticker.network.data.HistoricalValue
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import java.io.Serializable
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.github.mikephil.charting.data.Entry
 
 class DataPoint : DropBoxManager.Entry, Serializable, Comparable<DataPoint> {
 
@@ -39,7 +39,9 @@ class DataPoint : DropBoxManager.Entry, Serializable, Comparable<DataPoint> {
         @JvmField
         val CREATOR: Parcelable.Creator<DataPoint> = object : Parcelable.Creator<DataPoint> {
             override fun createFromParcel(source: Parcel): DataPoint {
-                return DataPoint(source)
+                return DataPoint(
+                    source
+                )
             }
 
             override fun newArray(size: Int): Array<DataPoint?> {

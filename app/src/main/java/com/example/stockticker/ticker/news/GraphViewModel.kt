@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.stockticker.ticker.components.Injector
 import com.example.stockticker.ticker.model.IStocksProvider
-import com.example.stockticker.ticker.network.DataPoint
+import com.example.stockticker.ticker.network.data.DataPoint
 import kotlinx.coroutines.launch
 
 class GraphViewModel(application: Application): AndroidViewModel(application) {

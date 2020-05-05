@@ -11,6 +11,7 @@
 
     <uses-sdk tools:overrideLibrary="androidx.browser,com.google.firebase.iid"/>
     <application
+        android:name=".ticker.StocksApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,8 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity
-            android:name="com.example.stockticker.ticker.StocksApp"
+        <activity android:name=".ticker.home.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -27,6 +27,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ticker.home.ParanormalActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/ParanormalActivityTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
+        </activity>
+
 
     </application>
 

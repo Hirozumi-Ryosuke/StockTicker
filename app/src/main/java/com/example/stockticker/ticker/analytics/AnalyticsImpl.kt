@@ -7,7 +7,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.APP_OPEN
 import com.google.firebase.analytics.FirebaseAnalytics.Param.*
 
-class AnalyticsImpl : Analytics {
+class AnalyticsImpl : Analytics, com.example.stockticker.ticker.components.Analytics {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var generalProperties: GeneralProperties

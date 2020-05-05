@@ -1,7 +1,7 @@
 package com.example.stockticker.ticker.base
 
 import com.example.stockticker.R
-import com.example.stockticker.ticker.network.DataPoint
+import com.example.stockticker.ticker.network.data.DataPoint
 
 abstract class BaseGraphActivity : BaseActivity() {
 

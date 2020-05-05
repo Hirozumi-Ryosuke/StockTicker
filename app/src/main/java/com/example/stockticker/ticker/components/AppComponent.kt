@@ -1,17 +1,28 @@
 package com.example.stockticker.ticker.components
 
 import android.content.Context
+import com.example.stockticker.ticker.AppPreferences
 import com.example.stockticker.ticker.StocksApp
 import com.example.stockticker.ticker.analytics.GeneralProperties
 import com.example.stockticker.ticker.base.BaseFragment
+import com.example.stockticker.ticker.debug.DbViewerActivity
 import com.example.stockticker.ticker.home.HomeFragment
 import com.example.stockticker.ticker.home.ParanormalActivity
+import com.example.stockticker.ticker.home.SplashActivity
+import com.example.stockticker.ticker.model.*
+import com.example.stockticker.ticker.network.NewsProvider
+import com.example.stockticker.ticker.network.StocksApi
+import com.example.stockticker.ticker.network.UserAgentInterceptor
+import com.example.stockticker.ticker.news.GraphActivity
 import com.example.stockticker.ticker.news.GraphViewModel
 import com.example.stockticker.ticker.news.QuoteDetailActivity
+import com.example.stockticker.ticker.portfolio.AddPositionActivity
 import com.example.stockticker.ticker.portfolio.StocksAdapter
 import com.example.stockticker.ticker.portfolio.search.SearchActivity
+import com.example.stockticker.ticker.repo.StocksStorage
 import com.example.stockticker.ticker.settings.WidgetSettingsActivity
 import com.example.stockticker.ticker.settings.WidgetSettingsFragment
+import com.example.stockticker.ticker.widget.RefreshReceiver
 import com.example.stockticker.ticker.widget.WidgetDataProvider
 import com.google.gson.Gson
 

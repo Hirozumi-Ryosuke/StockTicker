@@ -5,7 +5,7 @@ import androidx.annotation.RequiresApi
 import com.example.stockticker.R.string.*
 import com.example.stockticker.ticker.components.Injector.appComponent
 import com.example.stockticker.ticker.model.FetchResult.Companion.failure
-import com.example.stockticker.ticker.network.DataPoint
+import com.example.stockticker.ticker.network.data.DataPoint
 import com.example.stockticker.ticker.network.HistoricalDataApi
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
@@ -38,7 +38,12 @@ class HistoryProvider : IHistoryProvider {
                 historicalData.timeSeries.forEach { entry ->
                     val epochDate = parse(entry.key, ISO_LOCAL_DATE)
                         .toEpochDay()
-                    points.add(DataPoint(epochDate.toFloat(), entry.value.close.toFloat()))
+                    points.add(
+                        DataPoint(
+                            epochDate.toFloat(),
+                            entry.value.close.toFloat()
+                        )
+                    )
                 }
                 points.sorted()
             } catch (ex: Exception) {
@@ -70,7 +75,12 @@ class HistoryProvider : IHistoryProvider {
                 historicalData.timeSeries.forEach { entry ->
                     val epochDate = parse(entry.key, ISO_LOCAL_DATE)
                         .toEpochDay()
-                    points.add(DataPoint(epochDate.toFloat(), entry.value.close.toFloat()))
+                    points.add(
+                        DataPoint(
+                            epochDate.toFloat(),
+                            entry.value.close.toFloat()
+                        )
+                    )
                 }
                 cachedData = WeakReference(Pair(symbol, points))
                 points.filter {

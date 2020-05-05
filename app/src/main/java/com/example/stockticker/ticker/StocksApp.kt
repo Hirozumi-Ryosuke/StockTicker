@@ -1,14 +1,19 @@
 package com.example.stockticker.ticker
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.multidex.BuildConfig
 import androidx.multidex.MultiDexApplication
 import com.example.stockticker.R
 import com.example.stockticker.ticker.analytics.Analytics
+import com.example.stockticker.ticker.components.AppComponent
+import com.example.stockticker.ticker.components.AppModule
 import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.components.LoggingTree
 import com.example.stockticker.ticker.network.NewsProvider
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.viewpump.ViewPump
 import kotlinx.android.synthetic.*
+import timber.log.Timber
 import javax.inject.Inject
 
 open class StocksApp : MultiDexApplication() {

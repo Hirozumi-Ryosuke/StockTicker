@@ -1,9 +1,8 @@
 package com.example.stockticker.ticker.model
 
-import android.os.Build
 import android.os.Build.VERSION_CODES.*
 import androidx.annotation.RequiresApi
-import com.example.stockticker.ticker.network.DataPoint
+import com.example.stockticker.ticker.network.data.DataPoint
 import java.time.LocalDate
 import java.io.Serializable
 import java.time.LocalDate.now
