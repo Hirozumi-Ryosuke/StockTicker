@@ -1,6 +1,5 @@
 package com.example.stockticker.ticker.news
 
-import android.content.DialogInterface
 import android.content.DialogInterface.OnClickListener
 import android.os.Bundle
 import android.view.View
@@ -24,7 +23,14 @@ import com.example.stockticker.ticker.model.IHistoryProvider.Range.Companion.THR
 import com.example.stockticker.ticker.showDialog
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
-import kotlinx.android.synthetic.main.activity_graph.*
+import kotlinx.android.synthetic.main.activity_graph.desc
+import kotlinx.android.synthetic.main.activity_graph.graph_holder
+import kotlinx.android.synthetic.main.activity_graph.max
+import kotlinx.android.synthetic.main.activity_graph.one_month
+import kotlinx.android.synthetic.main.activity_graph.one_year
+import kotlinx.android.synthetic.main.activity_graph.progress
+import kotlinx.android.synthetic.main.activity_graph.three_month
+import kotlinx.android.synthetic.main.activity_graph.tickerName
 
 class GraphActivity : BaseGraphActivity() {
 

@@ -28,6 +28,10 @@ android {
 
 }
 
+kapt {
+    useBuildCache = true
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -46,6 +50,8 @@ dependencies {
 
     api 'com.google.dagger:dagger:2.27'
     kapt 'com.google.dagger:dagger-compiler:2.27'
+
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.6.0")
 
     implementation "com.squareup.okhttp3:okhttp:4.6.0"
     implementation "com.squareup.okhttp3:logging-interceptor:4.6.0"

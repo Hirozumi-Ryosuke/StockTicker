@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import java.io.Serializable
-import com.github.mikephil.charting.data.Entry
 
 class DataPoint : DropBoxManager.Entry, Serializable, Comparable<DataPoint> {
 

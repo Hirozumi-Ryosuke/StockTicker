@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.Network
 import androidx.fragment.app.Fragment
 import com.example.stockticker.R
 
@@ -94,10 +95,9 @@ fun Fragment.showDialog(message: String): AlertDialog {
 fun Context.isNetworkOnline(): Boolean {
     try {
         val connectivityManager =
-            this.getSystemService(
-                Context.CONNECTIVITY_SERVICE
-            ) as ConnectivityManager
-        val i = connectivityManager.activeNetworkInfo ?: return false
+            this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val i =
+            connectivityManager.activeNetworkInfo ?: return false
         if (!i.isConnected) return false
         if (!i.isAvailable) return false
         return true

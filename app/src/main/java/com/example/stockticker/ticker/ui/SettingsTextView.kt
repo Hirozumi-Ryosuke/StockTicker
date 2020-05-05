@@ -1,12 +1,17 @@
 package com.example.stockticker.ticker.ui
 
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.EditorInfo.IME_ACTION_DONE
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import com.example.stockticker.R
+import com.example.stockticker.R.dimen.setting_padding
+import com.example.stockticker.R.layout.layout_widget_setting
+import com.example.stockticker.R.styleable.*
 import kotlinx.android.synthetic.main.layout_widget_setting.view.*
 
 class SettingsTextView : LinearLayout {
@@ -30,14 +35,14 @@ class SettingsTextView : LinearLayout {
     ) {
         orientation = VERTICAL
         val inflater = LayoutInflater.from(context)
-        inflater.inflate(R.layout.layout_widget_setting, this, true)
-        val pad = resources.getDimensionPixelSize(R.dimen.setting_padding)
+        inflater.inflate(layout_widget_setting, this, true)
+        val pad = resources.getDimensionPixelSize(setting_padding)
         setPadding(pad, pad, pad, pad)
         attrs?.let {
-            val array = context.obtainStyledAttributes(it, R.styleable.SettingsTextView)
-            val title = array.getString(R.styleable.SettingsTextView_title_text)
+            val array = context.obtainStyledAttributes(it, SettingsTextView)
+            val title = array.getString(SettingsTextView_title_text)
             setTitle(title)
-            val subtitle = array.getString(R.styleable.SettingsTextView_subtitle_text)
+            val subtitle = array.getString(SettingsTextView_subtitle_text)
             setSubtitle(subtitle)
             array.recycle()
         }
@@ -64,7 +69,7 @@ class SettingsTextView : LinearLayout {
         isEditable: Boolean,
         callback: (s: String) -> Unit = {}
     ) {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         if (isEditable != editable) {
             editable = isEditable
             if (editable) {
@@ -72,7 +77,7 @@ class SettingsTextView : LinearLayout {
                 setting_edit_text.setText(setting_subtitle.text)
                 setting_edit_text.setSelection(setting_edit_text.text.length)
                 setting_edit_text.setOnEditorActionListener { v, actionId, _ ->
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (actionId == IME_ACTION_DONE) {
                         callback.invoke(v.text.toString())
                         true
                     } else {
