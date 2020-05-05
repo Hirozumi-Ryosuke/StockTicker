@@ -106,9 +106,9 @@ class RemoteStockViewAdapter(private val widgetId: Int) : RemoteViewsService.Rem
 
             val color: Int
             color = if (change < 0f || changeInPercent < 0f) {
-                context.resources.getColor(widgetData.negativeTextColor)
+                context.getColor(widgetData.negativeTextColor)
             } else {
-                context.resources.getColor(widgetData.positiveTextColor)
+                context.getColor(widgetData.positiveTextColor)
             }
             if (stockViewLayout == R.layout.stockview3) {
                 remoteViews.setTextColor(R.id.change, color)
@@ -121,16 +121,14 @@ class RemoteStockViewAdapter(private val widgetId: Int) : RemoteViewsService.Rem
             remoteViews.setTextColor(R.id.totalValue, widgetData.textColor())
 
             val fontSize = getFontSize()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                if (stockViewLayout == R.layout.stockview3) {
-                    remoteViews.setTextViewTextSize(R.id.change, TypedValue.COMPLEX_UNIT_SP, fontSize)
-                } else {
-                    remoteViews.setTextViewTextSize(R.id.changePercent, TypedValue.COMPLEX_UNIT_SP, fontSize)
-                    remoteViews.setTextViewTextSize(R.id.changeValue, TypedValue.COMPLEX_UNIT_SP, fontSize)
-                }
-                remoteViews.setTextViewTextSize(R.id.ticker, TypedValue.COMPLEX_UNIT_SP, fontSize)
-                remoteViews.setTextViewTextSize(R.id.totalValue, TypedValue.COMPLEX_UNIT_SP, fontSize)
+            if (stockViewLayout == R.layout.stockview3) {
+                remoteViews.setTextViewTextSize(R.id.change, TypedValue.COMPLEX_UNIT_SP, fontSize)
+            } else {
+                remoteViews.setTextViewTextSize(R.id.changePercent, TypedValue.COMPLEX_UNIT_SP, fontSize)
+                remoteViews.setTextViewTextSize(R.id.changeValue, TypedValue.COMPLEX_UNIT_SP, fontSize)
             }
+            remoteViews.setTextViewTextSize(R.id.ticker, TypedValue.COMPLEX_UNIT_SP, fontSize)
+            remoteViews.setTextViewTextSize(R.id.totalValue, TypedValue.COMPLEX_UNIT_SP, fontSize)
 
             if (stockViewLayout == R.layout.stockview3) {
                 val intent = Intent()
