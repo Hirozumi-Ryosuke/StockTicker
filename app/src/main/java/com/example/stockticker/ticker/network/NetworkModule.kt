@@ -3,10 +3,7 @@ package com.example.stockticker.ticker.network
 import android.content.Context
 import androidx.multidex.BuildConfig
 import com.example.stockticker.R
-import com.example.stockticker.ticker.model.AlarmScheduler
-import com.example.stockticker.ticker.model.HistoryProvider
-import com.example.stockticker.ticker.model.IStocksProvider
-import com.example.stockticker.ticker.model.StocksProvider
+import com.example.stockticker.ticker.model.*
 import com.example.stockticker.ticker.widget.WidgetDataProvider
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -33,7 +30,7 @@ class NetworkModule {
     internal fun provideHttpClientForYahoo(): OkHttpClient {
         val logger = HttpLoggingInterceptor()
         logger.level =
-            if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+            HttpLoggingInterceptor.Level.NONE
         val okHttpClient =
             OkHttpClient.Builder()
                 .addInterceptor(UserAgentInterceptor())

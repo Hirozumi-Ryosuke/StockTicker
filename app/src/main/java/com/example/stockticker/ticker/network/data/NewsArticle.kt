@@ -1,6 +1,9 @@
 package com.example.stockticker.ticker.network.data
 
 import android.text.Html
+import androidx.core.text.HtmlCompat
+import org.simpleframework.xml.Element
+import org.simpleframework.xml.Root
 import java.net.URL
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

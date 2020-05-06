@@ -1,18 +1,25 @@
 package com.example.stockticker.ticker.widget
 
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.URI_INTENT_SCHEME
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.RemoteViews
 import com.example.stockticker.R
+import com.example.stockticker.R.id.*
+import com.example.stockticker.R.layout.widget_empty_view
 import com.example.stockticker.ticker.AppPreferences
 import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.components.Injector.appComponent
 import com.example.stockticker.ticker.home.ParanormalActivity
 import com.example.stockticker.ticker.model.IStocksProvider
 import javax.inject.Inject
@@ -35,7 +42,7 @@ class StockWidget : AppWidgetProvider() {
         intent: Intent
     ) {
         if (!injected) {
-            Injector.appComponent.inject(this)
+            appComponent.inject(this)
             injected = true
         }
         super.onReceive(context, intent)
@@ -59,7 +66,7 @@ class StockWidget : AppWidgetProvider() {
             }
             val remoteViews: RemoteViews = createRemoteViews(context, minimumWidth)
             updateWidget(context, widgetId, remoteViews, appWidgetManager)
-            appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.list)
+            appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, list)
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds)
     }
@@ -79,7 +86,7 @@ class StockWidget : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
         if (!injected) {
-            Injector.appComponent.inject(this)
+            appComponent.inject(this)
             injected = true
         }
         if (stocksProvider.nextFetchMs() <= 0) {
@@ -140,46 +147,46 @@ class StockWidget : AppWidgetProvider() {
         val widgetData = widgetDataProvider.dataForWidgetId(appWidgetId)
         val widgetAdapterIntent = Intent(context, RemoteStockProviderService::class.java)
         widgetAdapterIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        widgetAdapterIntent.data = Uri.parse(widgetAdapterIntent.toUri(Intent.URI_INTENT_SCHEME))
+        widgetAdapterIntent.data = Uri.parse(widgetAdapterIntent.toUri(URI_INTENT_SCHEME))
 
-        remoteViews.setRemoteAdapter(R.id.list, widgetAdapterIntent)
-        remoteViews.setEmptyView(R.id.list, R.layout.widget_empty_view)
+        remoteViews.setRemoteAdapter(list, widgetAdapterIntent)
+        remoteViews.setEmptyView(list, widget_empty_view)
         val intent = Intent(context, WidgetClickReceiver::class.java)
         intent.action = WidgetClickReceiver.CLICK_BCAST_INTENTFILTER
         val flipIntent =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        remoteViews.setPendingIntentTemplate(R.id.list, flipIntent)
+            PendingIntent.getBroadcast(context, 0, intent, FLAG_UPDATE_CURRENT)
+        remoteViews.setPendingIntentTemplate(list, flipIntent)
         val lastFetched: String = stocksProvider.lastFetched()
         val lastUpdatedText = context.getString(R.string.last_fetch, lastFetched)
-        remoteViews.setTextViewText(R.id.last_updated, lastUpdatedText)
+        remoteViews.setTextViewText(last_updated, lastUpdatedText)
         val nextUpdate: String = stocksProvider.nextFetch()
         val nextUpdateText: String = context.getString(R.string.next_fetch, nextUpdate)
-        remoteViews.setTextViewText(R.id.next_update, nextUpdateText)
+        remoteViews.setTextViewText(next_update, nextUpdateText)
         remoteViews.setInt(R.id.widget_layout, "setBackgroundResource", widgetData.backgroundResource())
         // Refresh icon and progress
         val refreshing = appPreferences.isRefreshing()
         if (refreshing) {
-            remoteViews.setViewVisibility(R.id.refresh_progress, View.VISIBLE)
-            remoteViews.setViewVisibility(R.id.refresh_icon, View.GONE)
+            remoteViews.setViewVisibility(refresh_progress, VISIBLE)
+            remoteViews.setViewVisibility(refresh_icon, GONE)
         } else {
-            remoteViews.setViewVisibility(R.id.refresh_progress, View.GONE)
-            remoteViews.setViewVisibility(R.id.refresh_icon, View.VISIBLE)
+            remoteViews.setViewVisibility(refresh_progress, GONE)
+            remoteViews.setViewVisibility(refresh_icon, VISIBLE)
         }
         // Show/hide header
         val hideHeader = widgetData.hideHeader()
         if (hideHeader) {
-            remoteViews.setViewVisibility(R.id.widget_header, View.GONE)
+            remoteViews.setViewVisibility(widget_header, GONE)
         } else {
-            remoteViews.setViewVisibility(R.id.widget_header, View.VISIBLE)
+            remoteViews.setViewVisibility(widget_header, VISIBLE)
         }
         val updateReceiverIntent = Intent(context, RefreshReceiver::class.java)
         updateReceiverIntent.action = AppPreferences.UPDATE_FILTER
         val refreshPendingIntent =
             PendingIntent.getBroadcast(
                 context.applicationContext, 0, updateReceiverIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                FLAG_UPDATE_CURRENT
             )
-        remoteViews.setOnClickPendingIntent(R.id.refresh_icon, refreshPendingIntent)
+        remoteViews.setOnClickPendingIntent(refresh_icon, refreshPendingIntent)
         appWidgetManager.updateAppWidget(appWidgetId, remoteViews)
     }
 }

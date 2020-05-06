@@ -1,6 +1,6 @@
 package com.example.stockticker.ticker.components
 
-import android.os.Build
+import android.os.Build.VERSION_CODES.*
 import android.os.SystemClock
 import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
@@ -14,10 +14,10 @@ interface AppClock {
 
     class AppClockImpl : AppClock {
 
-        @RequiresApi(Build.VERSION_CODES.O)
+        @RequiresApi(O)
         override fun todayZoned(): ZonedDateTime = ZonedDateTime.now()
 
-        @RequiresApi(Build.VERSION_CODES.O)
+        @RequiresApi(O)
         override fun todayLocal(): LocalDateTime = LocalDateTime.now()
 
         override fun currentTimeMillis(): Long = System.currentTimeMillis()

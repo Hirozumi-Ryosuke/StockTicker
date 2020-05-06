@@ -3,11 +3,12 @@ package com.example.stockticker.ticker.analytics
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import com.example.stockticker.ticker.home.SplashActivity
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.APP_OPEN
 import com.google.firebase.analytics.FirebaseAnalytics.Param.*
 
-class AnalyticsImpl : Analytics, com.example.stockticker.ticker.components.Analytics {
+class AnalyticsImpl : Analytics {
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var generalProperties: GeneralProperties

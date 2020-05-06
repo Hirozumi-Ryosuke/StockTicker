@@ -6,13 +6,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.model.IHistoryProvider
+import com.example.stockticker.ticker.model.IHistoryProvider.Range.*
 import com.example.stockticker.ticker.model.IStocksProvider
 import com.example.stockticker.ticker.network.data.DataPoint
+import com.example.stockticker.ticker.network.data.Quote
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class GraphViewModel(application: Application): AndroidViewModel(application) {
 
-    @Inject lateinit var stocksProvider: IStocksProvider
+    @Inject
+    lateinit var stocksProvider: IStocksProvider
     @Inject lateinit var historyProvider: IHistoryProvider
 
     private val _quote = MutableLiveData<Quote>()
@@ -40,13 +45,12 @@ class GraphViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun fetchHistoricalDataByRange(ticker: String, range: IHistoryProvider.Range.DateRange) {
+    fun fetchHistoricalDataByRange(ticker: String, range: DateRange) {
         viewModelScope.launch {
             val result = historyProvider.getHistoricalDataByRange(ticker, range)
-            if (result.wasSuccessful) {
-                _data.value = result.data
-            } else {
-                _error.value = result.error
+            when {
+                result.wasSuccessful -> _data.value = result.data
+                else -> _error.value = result.error
             }
         }
     }

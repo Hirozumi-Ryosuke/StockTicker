@@ -30,7 +30,7 @@ import com.example.stockticker.ticker.widget.*
 import com.google.gson.Gson
 
 @javax.inject.Singleton
-@dagger.Component(modules = arrayOf(AppModule::class))
+@dagger.Component(modules = [AppModule::class])
 interface AppComponent {
 
     // Activities

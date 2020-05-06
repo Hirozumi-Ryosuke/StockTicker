@@ -1,5 +1,33 @@
 package com.example.stockticker.ticker.news
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Bundle
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.stockticker.R
+import com.example.stockticker.ticker.CustomTabs
+import com.example.stockticker.ticker.analytics.ClickEvent
+import com.example.stockticker.ticker.analytics.GeneralEvent
+import com.example.stockticker.ticker.base.BaseGraphActivity
+import com.example.stockticker.ticker.components.InAppMessage
+import com.example.stockticker.ticker.components.Injector
+import com.example.stockticker.ticker.isNetworkOnline
+import com.example.stockticker.ticker.network.data.NewsArticle
+import com.example.stockticker.ticker.network.data.Quote
+import com.example.stockticker.ticker.portfolio.AddPositionActivity
+import com.example.stockticker.ticker.showDialog
+import com.example.stockticker.ticker.ui.SpacingDecoration
+import com.example.stockticker.ticker.widget.WidgetDataProvider
+import com.github.mikephil.charting.charts.LineChart
+import kotlinx.android.synthetic.main.activity_quote_detail.*
+import javax.inject.Inject
+
 class QuoteDetailActivity : BaseGraphActivity(), NewsFeedAdapter.NewsClickListener {
 
     companion object {
@@ -12,7 +40,8 @@ class QuoteDetailActivity : BaseGraphActivity(), NewsFeedAdapter.NewsClickListen
     }
 
     override val simpleName: String = "NewsFeedActivity"
-    @Inject internal lateinit var widgetDataProvider: WidgetDataProvider
+    @Inject
+    internal lateinit var widgetDataProvider: WidgetDataProvider
     private lateinit var adapter: NewsFeedAdapter
     private lateinit var ticker: String
     private lateinit var quote: Quote
@@ -39,7 +68,7 @@ class QuoteDetailActivity : BaseGraphActivity(), NewsFeedAdapter.NewsClickListen
         setupGraphView()
         ticker = checkNotNull(intent.getStringExtra(TICKER))
 
-        viewModel = ViewModelProvider(this, AndroidViewModelFactory.getInstance(application))
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
             .get(QuoteDetailViewModel::class.java)
         viewModel.quote.observe(this, Observer { result ->
             if (result.wasSuccessful) {

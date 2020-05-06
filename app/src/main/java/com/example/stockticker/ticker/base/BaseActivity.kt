@@ -1,25 +1,35 @@
 package com.example.stockticker.ticker.base
 
+import android.R.id.home
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.stockticker.R
+import com.example.stockticker.R.string.error_symbol
 import com.example.stockticker.ticker.analytics.Analytics
 import com.example.stockticker.ticker.components.AsyncBus
 import com.example.stockticker.ticker.components.InAppMessage
 import com.example.stockticker.ticker.events.ErrorEvent
+import com.example.stockticker.ticker.showDialog
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 abstract class BaseActivity : AppCompatActivity() {
 
     abstract val simpleName: String
-    @Inject internal lateinit var bus: AsyncBus
+    @Inject
+    internal lateinit var bus: AsyncBus
     @Inject internal lateinit var analytics: Analytics
 
     override fun attachBaseContext(newBase: Context) {
@@ -34,14 +44,14 @@ abstract class BaseActivity : AppCompatActivity() {
         analytics.trackScreenView(simpleName, this)
     }
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
             val errorFlow = bus.receive<ErrorEvent>()
             errorFlow.collect { event ->
-                if (this.isActive) {
-                    showDialog(event.message)
-                }
+                if (this.isActive) event.message
             }
         }
     }
@@ -55,8 +65,8 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == home) {
             onBackPressed()
             return true
         }
@@ -64,7 +74,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun showErrorAndFinish() {
-        InAppMessage.showToast(this, R.string.error_symbol)
+        InAppMessage.showToast(this, error_symbol)
         finish()
     }
 

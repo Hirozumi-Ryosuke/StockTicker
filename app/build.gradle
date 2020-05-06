@@ -74,6 +74,29 @@ dependencies {
     implementation "com.facebook.stetho:stetho-okhttp3:$stetho_version"
     implementation "com.facebook.stetho:stetho-js-rhino:$stetho_version"
 
+    def junit_version = "5.7.0-M1"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+    testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+    testImplementation "org.junit:junit-bom:$junit_version"
+
+    def junit_platform_version = "1.7.0-M1"
+    testImplementation "org.junit.platform:junit-platform-commons:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-console:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-console-standalone:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-engine:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-launcher:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-reporting:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-runner:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-suite-api:$junit_platform_version"
+    testImplementation "org.junit.platform:junit-platform-testkit:$junit_platform_version"
+
+    testImplementation "junit:junit:4.13"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    
     def rxlifecycle3_version = "3.1.0"
     implementation "com.trello.rxlifecycle3:rxlifecycle:$rxlifecycle3_version"
     implementation "com.trello.rxlifecycle3:rxlifecycle-android:$rxlifecycle3_version"
@@ -85,6 +108,9 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
+
     implementation "androidx.multidex:multidex:2.0.1"
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -95,9 +121,6 @@ dependencies {
 
     implementation "javax.inject:javax.inject:1"
     implementation "javax.annotation:javax.annotation-api:1.3.2"
-
-    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
-    implementation 'io.reactivex.rxjava3:rxjava:3.0.0'
 
     implementation 'com.nbsp:materialfilepicker:1.9.1'
     implementation "io.github.inflationx:calligraphy3:3.1.1"
@@ -118,12 +141,9 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 
-    testImplementation "junit:junit:4.13"
     testImplementation 'org.assertj:assertj-core:3.15.0'
     testImplementation "org.robolectric:robolectric:4.3.1"
     testImplementation "org.robolectric:shadows-multidex:4.3.1"
-    testImplementation 'androidx.test:runner:1.2.0'
-    testImplementation 'androidx.test:rules:1.2.0'
     testImplementation 'androidx.annotation:annotation:1.1.0'
     testImplementation "androidx.test:rules:1.2.0"
     testImplementation 'androidx.test:runner:1.2.0'
@@ -133,7 +153,6 @@ dependencies {
 
 
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.4'
     implementation 'com.google.firebase:firebase-core:17.4.0'

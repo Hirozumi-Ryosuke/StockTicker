@@ -3,6 +3,7 @@ package com.example.stockticker.ticker.base
 import androidx.fragment.app.Fragment
 import com.example.stockticker.ticker.analytics.Analytics
 import com.example.stockticker.ticker.components.Injector
+import javax.inject.Inject
 
 abstract class BaseFragment : Fragment() {
 
@@ -13,7 +14,8 @@ abstract class BaseFragment : Fragment() {
     abstract val simpleName: String
 
     class InjectionHolder {
-        @Inject internal lateinit var analytics: Analytics
+        @Inject
+        internal lateinit var analytics: Analytics
 
         init {
             Injector.appComponent.inject(this)

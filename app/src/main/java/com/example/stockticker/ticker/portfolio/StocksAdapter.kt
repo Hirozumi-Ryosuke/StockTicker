@@ -1,7 +1,16 @@
 package com.example.stockticker.ticker.portfolio
 
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.stockticker.R
+import com.example.stockticker.R.layout.item_position
+import com.example.stockticker.R.layout.item_stock
+import com.example.stockticker.ticker.network.data.Quote
+import com.example.stockticker.ticker.portfolio.drag_drop.ItemTouchHelperAdapter
+import com.example.stockticker.ticker.portfolio.drag_drop.OnStartDragListener
+import com.example.stockticker.ticker.widget.WidgetData
 
 class StocksAdapter constructor(
     private val widgetData: WidgetData,
@@ -66,12 +75,12 @@ class StocksAdapter constructor(
         val portfolioVH: PortfolioVH
         portfolioVH = if (viewType == TYPE_POSITION) {
             val itemView = LayoutInflater.from(context)
-                .inflate(R.layout.item_position, parent, false)
-            PositionVH(itemView)
+                .inflate(item_position, parent, false)
+            PortfolioVH.PositionVH(itemView)
         } else {
             val itemView = LayoutInflater.from(context)
-                .inflate(R.layout.item_stock, parent, false)
-            StockVH(itemView)
+                .inflate(item_stock, parent, false)
+            PortfolioVH.StockVH(itemView)
         }
         return portfolioVH
     }
@@ -89,7 +98,7 @@ class StocksAdapter constructor(
 
     override fun getItemId(position: Int): Long = position.toLong()
 
-    override fun getItemCount(): Int = quoteList.size
+    override fun getItemCount() = quoteList.size
 
     override fun onItemMove(
         fromPosition: Int,

@@ -17,7 +17,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
 
         <activity android:name=".ticker.home.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -35,8 +36,80 @@
                 <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ticker.portfolio.AddPositionActivity"
+            android:label="@string/add_position"
+            android:theme="@style/AddPositionTheme"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".ticker.settings.WidgetSettingsActivity"
+            android:label="@string/action_Settings"
+            android:theme="@style/WidgetSettingsTheme"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ticker.portfolio.search.SearchActivity"
+            android:label="@string/action_search"
+            android:theme="@style/SearchTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".ticker.news.QuoteDetailActivity"
+            android:label="@string/news_feed"
+            android:theme="@style/NewsFeedActivityTheme" />
+        <activity android:name=".ticker.news.GraphActivity"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/GraphActivityTheme" />
+        <activity android:name=".ticker.debug.DbViewerActivity"
+            android:theme="@style/DbViewerTheme"/>
 
+        <receiver android:name=".ticker.UpdateReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ticker.widget.RefreshReceiver"
+            android:enabled="true"
+            android:exported="false"/>
 
+        <service android:name=".ticker.model.RefreshService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <receiver android:name=".ticker.widget.WidgetClickReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name=".ticker.WIDGET_CLICK"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ticker.widget.StockWidget"
+            android:label="@string/widget_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget"/>
+        </receiver>
+
+        <service android:name=".ticker.widget.RemoteStockProviderService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+        
+        <provider
+            android:authorities="${applicationId}.provider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="856c59cfad291a9403df034e02e90219acfdedb1" />
     </application>
 
 </manifest>
